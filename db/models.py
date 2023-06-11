@@ -1,4 +1,7 @@
-from sqlalchemy import String, DateTime
+from typing import Optional
+from typing_extensions import Annotated
+
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from datetime import datetime
@@ -6,19 +9,25 @@ from datetime import datetime
 from db.database import Base
 
 
-class Question(Base):
-    __tablename__ = 'questions'
+intpk = Annotated[int, mapped_column(primary_key=True)]
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+
+class User(Base):
+    __tablename__ = 'users'
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
     question_uuid: Mapped[int]
-    question: Mapped[str]
-    answer: Mapped[str]
+    email: Mapped[str]
+    username: Mapped[str] = mapped_column(index=True)
+    hashed_password: Mapped[str]
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
 
-# class Question(Base):
-#     __tablename__ = 'questions'
-#     # mapped_column
-#     id = Column(Integer, primary_key=True, index=True)
-#     question = Column(String)
-#     answer = Column(String)
-#     created_at = Column(DateTime, default=datetime.utcnow)
+
+class Salary(Base):
+    __tablename__ = 'salaries'
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    user_id: Mapped[intpk] = mapped_column(ForeignKey("users.id"))
+    amount: Mapped[int]
+    email: Mapped[str]
+    next_raise_date: Mapped[Optional[datetime]]
