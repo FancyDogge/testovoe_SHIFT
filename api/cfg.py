@@ -14,14 +14,3 @@ auth_backend = AuthenticationBackend(
     transport=cookie_transport,
     get_strategy=get_jwt_strategy,
 )
-
-
-
-# {
-#   "email": "kek@mail.ru",
-#   "password": "5795798",
-#   "is_active": true,
-#   "is_superuser": false,
-#   "is_verified": false,
-#   "username": "kek"
-# }
