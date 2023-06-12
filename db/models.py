@@ -4,6 +4,7 @@ from typing_extensions import Annotated
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
+from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
 from datetime import datetime
 
 from db.database import Base
@@ -12,11 +13,10 @@ from db.database import Base
 intpk = Annotated[int, mapped_column(primary_key=True)]
 
 
-class User(Base):
+class User(SQLAlchemyBaseUserTable[int], Base):
     __tablename__ = 'users'
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    question_uuid: Mapped[int]
     email: Mapped[str]
     username: Mapped[str] = mapped_column(index=True)
     hashed_password: Mapped[str]
