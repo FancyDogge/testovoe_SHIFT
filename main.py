@@ -1,6 +1,5 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi_users import fastapi_users, FastAPIUsers
-# from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
@@ -34,7 +33,8 @@ app.include_router(
 )
 
 
-@app.get("/salary", tags=["Salary"])
+
+@app.get("/salary", response_model=SalaryRead, tags=["Salary"])
 async def get_salary(current_user: User = Depends(current_user), db: AsyncSession = Depends(get_async_session)):
     query = select(Salary).where(Salary.user_id == current_user.id)
     salary = await db.execute(query)
@@ -46,12 +46,18 @@ async def get_salary(current_user: User = Depends(current_user), db: AsyncSessio
         raise HTTPException(status_code=404, detail="Salary not found")
 
 
-@app.post("/salary", tags=["Salary"]) 
+@app.post("/salary", response_model=SalaryRead, tags=["Salary"]) 
 async def create_salary(
     amount: int,
     current_user: User = Depends(current_user),
     db: AsyncSession = Depends(get_async_session)
 ):
+    query = select(Salary).where(Salary.user_id == current_user.id)
+    existing_salary = await db.execute(query)
+    existing_salary = existing_salary.scalar_one_or_none()
+    if existing_salary:
+        raise HTTPException(status_code=400, detail="Salary already exists for the user")
+    
     salary = Salary(amount=amount, user_id=current_user.id)
     db.add(salary)
     await db.commit()

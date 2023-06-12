@@ -31,7 +31,7 @@ class SalaryRead(BaseModel):
     id: int
     user_id: int
     amount: int
-    next_raise_date: datetime
+    next_raise_date: Optional[datetime]
 
     class Config:
         orm_mode = True
